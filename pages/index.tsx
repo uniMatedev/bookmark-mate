@@ -1,28 +1,35 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import Hero from "./components/Hero";
+import { useState, useEffect } from 'react';
+import { bookmarkManager, BookmarkManager } from '../bookmarkLogic/bookmarkmanager';
+interface Bookmark {
+  index: number;
+  title: string;
+  url: string;
+  id: number;
+  parentId: string;
+  dateAddedLocal: string;
+  dateAddedUTC: string;
+}
 
-const Home: NextPage = () => {
+export default function Home() {
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
+
+  useEffect(() => {
+    fetch('/api/bookmarks')
+      .then((res) => res.json())
+      .then((data) => setBookmarks(data));
+  }, []);
+
   return (
     <div>
-      <Head>
-        <title>Bookmark Mate</title>
-        <meta
-          name="description"
-          content="Next Tail."
-        />
-        <link rel="icon" href="/logo.svg" />
-      </Head>
-      <Hero
-        title="Bookmark Mate"
-        subtitle="Simplicity, redefined. The ultimate starter kit for minimalist web development."
-        buttonText="Download Now"
-        buttonLink="https://example.com/download"
-        imageSrc="/logo.svg"
-        imageAlt="Next Tail Logo"
-      />
+      <h1>My Bookmarks</h1>
+      <ul>
+        {bookmarks.map((bookmark) => (
+          <li key={bookmark.id}>
+            <a href={bookmark.url}>{bookmark.title}</a>
+          </li>
+          
+        ))}
+      </ul>
     </div>
   );
-};
-
-export default Home;
+}
